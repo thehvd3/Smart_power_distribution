@@ -1,87 +1,89 @@
-# Smart_power_distribution
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--   <title>Power Network Vulnerability Simulation and Optimization</title> -->
+</head>
+<body>
+  <h1>Power Network Vulnerability Simulation and Optimization</h1>
+  <p>This project simulates a real-world scenario where a power network of multiple cities (stations) and transmission lines is vulnerable to selective line tripping. The goal is to simulate an adversarial model for understanding vulnerabilities in power systems and optimize the initial cost of wiring through graph algorithms.</p>
 
-Overview:
-This project simulates a real-world scenario where a power network of multiple cities (stations) and transmission lines is vulnerable to selective line tripping. The aim is to:
+  <h2>Project Overview</h2>
+  <h3>Objective</h3>
+  <p>This project combines Dynamic Programming (DP) and Graph Algorithms (Kruskal's Minimum Spanning Tree) to efficiently simulate and optimize the operations of a power network. The simulation helps identify system vulnerabilities by modeling a controlled, constrained attack on power lines and finds an optimal method to wire cities with minimal cost and redundancy.</p>
 
-(1). Maximize power disbalance by tripping selected lines under strict constraints.
-(2). Ensure minimal wiring cost when initially connecting the network (via MST).
+  <ul>
+    <li><strong>Part 1:</strong> <em>Dynamic Programming Model — Lines Tripping System</em>
+      <ul>
+        <li>Simulate the potential behavior of an attacker trying to disrupt a power system by tripping specific lines.</li>
+        <li>Maximize power disbalance while respecting various constraints, such as not being able to trip all lines of a station or all selected lines at once.</li>
+        <li>Identify system weaknesses and areas that need improvement.</li>
+      </ul>
+    </li>
+    <li><strong>Part 2:</strong> <em>N-City Electricity Optimization — Minimum Cost Wiring</em>
+      <ul>
+        <li>Using Kruskal's Minimum Spanning Tree (MST) algorithm, optimize the cost of connecting cities.</li>
+        <li>Ensure that all cities are connected, with no redundant wiring, and that the total wiring cost is minimized.</li>
+      </ul>
+    </li>
+  </ul>
 
-This project combines Dynamic Programming and Graph Algorithms (Kruskal's MST) for an efficient and realistic simulation of grid operations.
+  <h2>Motivation</h2>
+  <p>This project simulates potential attacks on power systems to better understand vulnerabilities and work proactively to mitigate them. The use of dynamic programming helps identify the optimal way to cause maximum disbalance with minimal line tripping, while Kruskal's MST algorithm is used to simulate the initial cost-efficient wiring of a power network.</p>
+  <p>The goal is to help planners and utility companies design resilient and efficient grids by visualizing and testing their vulnerabilities.</p>
 
-Motivation: Why This Project?
-This project aims to simulate the potential behavior of an attacker trying to disrupt a power system by tripping a strategic subset of lines. By thinking from the attacker’s perspective — much like how police try to think like a thief — we can better understand vulnerabilities in our grid and work on strengthening it proactively.
-The dynamic programming problem models a controlled, constrained attack on power lines to cause maximum disbalance, helping us identify which system weaknesses need mitigation. The long-term goal is to create smarter, more resilient power systems that are harder to exploit.
-This simulation can serve as a blueprint for planning resilient smart grids or testing vulnerability in critical infrastructure systems.
+  <h2>Part 1: Dynamic Programming Model — Lines Tripping System</h2>
+  <h3>Problem Context:</h3>
+  <ul>
+    <li><strong>n power stations</strong>, each with <strong>m transmission lines</strong>.</li>
+    <li>A 3D matrix <code>g[i][j][t]</code> defines the disbalance caused by tripping the j-th line of station i at time t.</li>
+    <li>We can trip up to <strong>pos</strong> lines, but:
+      <ul>
+        <li>Can't trip all lines of any station.</li>
+        <li>Can't trip all <strong>pos</strong> lines at once.</li>
+      </ul>
+    </li>
+    <li>Forbidden pairs <code>(station, line)</code> must be skipped.</li>
+  </ul>
 
-While the first part of the project focused on identifying vulnerabilities through adversarial modeling, the second part addresses a more fundamental engineering problem:How do we initially build a power distribution network that connects all cities with minimum cost and redundancy?
+  <h3>DP State Definition:</h3>
+  <p><code>dp[i][j][t]</code> = max disbalance after considering the first <strong>i</strong> stations, tripping <strong>j</strong> lines in total, and currently at time <strong>t</strong>.</p>
 
-In large-scale infrastructure projects (like rural electrification or smart grid expansion), planners must choose how to wire cities or substations so that:
+  <h3>Transition Logic:</h3>
+  <p>Loop over each station <strong>i</strong>, each line <strong>k</strong>, and time step <strong>t</strong>:</p>
+  <pre><code>if ((i, k) not forbidden and a[i] not exceeded): 
+    dp[i][j+1][t+1] = max(dp[i][j+1][t+1], dp[i-1][j][t] + g[i][k][t+1]);</code></pre>
 
-(a) All regions get power,
-(b) Costs are minimized, and
-(c) There’s no unnecessary duplication of connections.
+  <h3>Complexity:</h3>
+  <ul>
+    <li><strong>Time:</strong> O(n × pos × T × m)</li>
+    <li><strong>Space:</strong> O(n × pos × T) — can be optimized via state compression.</li>
+  </ul>
 
-This is a classic case for applying the Minimum Spanning Tree (MST) algorithm. It ensures that every node (city/station) is connected at the lowest total wiring cost, with no cycles — exactly what real-world grid designers aim for during initial rollout or expansion phases.
-This simulation can help utility companies or city planners visualize wiring plans, budget for connection costs, and create a baseline before integrating additional layers like redundancy or fault-tolerance.
+  <h2>Part 2: N-City Electricity Optimization — Minimum Cost Wiring</h2>
+  <h3>Problem:</h3>
+  <p>Given <strong>n</strong> cities and <strong>e</strong> edges (potential wires) with weights (costs), connect all cities:
+    <ul>
+      <li>With minimal total cost.</li>
+      <li>Without cycles (i.e., forming a tree).</li>
+    </ul>
+  </p>
 
+  <h3>Algorithm Used: Kruskal's MST</h3>
+  <ul>
+    <li>Sort edges by cost.</li>
+    <li>Use Disjoint Set Union (DSU) to avoid cycles.</li>
+    <li>Add edges if their endpoints belong to different sets.</li>
+  </ul>
 
-1.) Part 1: Dynamic Programming Model — Lines Tripping System
+  <h3>Complexity:</h3>
+  <ul>
+    <li><strong>Time:</strong> O(E log E) — using sorted edges and DSU.</li>
+  </ul>
 
-Problem Context:
+  <h3>Approach:</h3>
+  <p>Assume a new node <strong>node-0</strong> as the main power station. Connect each new power station to <strong>node-0</strong> with a cost of installing that station (<strong>city[i]</strong>). Treat the problem as a Minimum Spanning Tree (MST) execution on a graph with <strong>n+1</strong> nodes.</p>
 
-n power stations, each with m transmission lines
-
-A 3D matrix g[i][j][t] defines the disbalance caused by tripping the j-th line of station i at time t
-
-We can trip up to pos lines, but:
-
-Can't trip all lines of any station
-
-Can't trip all pos lines at once
-
-Forbidden pairs (station, line) must be skipped
-
-Each station i has a maximum trippable lines a[i]
-
-DP State Definition
-
-dp[i][j][t] = max disbalance after considering first i stations,
-              tripping j lines in total,
-              and currently at time t
-
-Transition Logic
-
-Loop over each station i, each line k, and time step t:
-
-if ((i, k) not forbidden and a[i] not exceeded):
-    dp[i][j+1][t+1] = max(dp[i][j+1][t+1], dp[i-1][j][t] + g[i][k][t+1]);
-
-Complexity
-Time: O(n × pos × T × m)
-Space: O(n × pos × T) — can be optimized via state compression
-
-⚡ Part 2: N-City Electricity Optimization — Minimum Cost Wiring
-
-Problem:
-
-Given n cities and e edges (potential wires) with weights (costs), connect all cities:
-
-With minimal total cost
-
-Without cycles (i.e., a tree)
-
-Algorithm Used: Kruskal's MST
-
-Sort edges by cost
-
-Use Disjoint Set Union (DSU) to avoid cycles
-
-Add edges if endpoints are in different sets
-
-⏱️ Complexity
-Time: O(E log E) using sorted edges and DSU
-
-Logic:
-We look at the cities as node and the main idea was to assume a new node and call it node-0.
-This node acts as Main power station and if add a new power station in a city we basically connect that city to this node-0 and this connection cost = cost of making a power station in that particular city( = city[i])
-Overall the whole graph have n+1 nodes and all nodes have edges connecting one another from here on its a Minimum Spamming Tree execution on this graph.
+ </body>
+</html>
