@@ -57,7 +57,7 @@
 
   <h3>Complexity:</h3>
   <ul>
-    <li><strong>Time:</strong> O(n × pos × T × m)</li>
+    <li><strong>Time:</strong> O(n × pos × T^2 × m)</li>
     <li><strong>Space:</strong> O(n × pos × T) — can be optimized via state compression.</li>
   </ul>
 
