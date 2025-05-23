@@ -53,7 +53,7 @@
   <h3>Transition Logic:</h3>
   <p>Loop over each station <strong>i</strong>, each line <strong>k</strong>, and time step <strong>t</strong>:</p>
   <pre><code>if ((i, k) not forbidden and a[i] not exceeded): 
-    dp[i][j+1][t+1] = max(dp[i][j+1][t+1], dp[i-1][j][t] + g[i][k][t+1]);</code></pre>
+    dp[i][j][t] = max(dp[i-1][j][t], dp[i-1][j-k][pre_t] + g[i][k][t]);</code></pre>
 
   <h3>Complexity:</h3>
   <ul>
